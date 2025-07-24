@@ -75,20 +75,20 @@ jobs:
         with:
           context: .
           push: true
-          tags: Hemanth0725/yourimage:latest
+          tags: hemanth0725/yourimage:latest
 
       - name: 🔐 Snyk Container Scan
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: Hemanth0725/yourimage:latest
+          image: hemanth0725/yourimage:latest
           args: --severity-threshold=high
 
       - name: 🔎 Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: Hemanth0725/yourimage:latest
+          image-ref: hemanth0725/yourimage:latest
           format: table
           exit-code: 1
           severity: HIGH,CRITICAL
