@@ -27,27 +27,34 @@ jobs:
   snyk-deps:
     runs-on: ubuntu-latest
     steps:
+      - name: 🔁 Checkout code
+        uses: actions/checkout@v3
+
       - name: 📦 Snyk Dependency Scan
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+          args: --severity-threshold=high
 
-  # 🧠 Optional: Snyk Code scan — only run if your org has this enabled
-  # You can comment this out if Snyk Code is not active
   snyk-code:
     runs-on: ubuntu-latest
-    continue-on-error: true  # 👈 Prevent failure if scan throws error
+    continue-on-error: true
     steps:
+      - name: 🔁 Checkout code
+        uses: actions/checkout@v3
+
       - name: 🧠 Snyk Code Scan
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: code test
-          args: --severity-threshold=high
+          args: --severity-threshold=high --all-projects --detection-depth=4
 
   docker-build-and-secure:
-    needs: [test-and-install, snyk-deps]  # Removed snyk-code as a blocker
+    needs: [test-and-install, snyk-deps]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -60,7 +67,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: 🛠️ Build & Push Docker image
+      - name: 🛠️ Build & Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
