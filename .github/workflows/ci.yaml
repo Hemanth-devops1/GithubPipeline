@@ -57,7 +57,7 @@ jobs:
           args: --severity-threshold=high --all-projects --detection-depth=4
 
   docker-build-and-secure:
-    needs: [test-and-install, snyk-deps]  # snyk-code is optional
+    needs: [test-and-install, snyk-deps, snyk-code]  # snyk-code is optional
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -75,14 +75,14 @@ jobs:
         with:
           context: .
           push: true
-          tags: yourdockerhubusername/yourimage:latest
+          tags: Hemanth0725/yourimage:latest
 
       - name: 🔐 Snyk Container Scan
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: yourdockerhubusername/yourimage:latest
+          image: Hemanth0725/yourimage:latest
           args: --severity-threshold=high
 
       - name: 🔎 Trivy Scan
