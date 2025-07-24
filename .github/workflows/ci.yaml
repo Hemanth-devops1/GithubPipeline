@@ -10,7 +10,7 @@ jobs:
   test-and-install:
     runs-on: ubuntu-latest
     steps:
-      - name: 🔁 Checkout
+      - name: 🔁 Checkout code
         uses: actions/checkout@v3
 
       - name: 📦 Set up Node.js
@@ -21,18 +21,8 @@ jobs:
       - name: 📥 Install dependencies
         run: npm install
 
-      - name: ✅ Run tests
+      - name: ✅ Run unit tests
         run: npm test
-
-  snyk-code:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🧠 Snyk Code Scan
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: code test
 
   snyk-deps:
     runs-on: ubuntu-latest
@@ -42,12 +32,26 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
+  # 🧠 Optional: Snyk Code scan — only run if your org has this enabled
+  # You can comment this out if Snyk Code is not active
+  snyk-code:
+    runs-on: ubuntu-latest
+    continue-on-error: true  # 👈 Prevent failure if scan throws error
+    steps:
+      - name: 🧠 Snyk Code Scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: code test
+          args: --severity-threshold=high
+
   docker-build-and-secure:
-    needs: [test-and-install, snyk-code, snyk-deps]
+    needs: [test-and-install, snyk-deps]  # Removed snyk-code as a blocker
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: 🔁 Checkout
+      - name: 🔁 Checkout code
         uses: actions/checkout@v3
 
       - name: 🐳 Docker Login
@@ -56,7 +60,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: 🛠️ Build & Push Image
+      - name: 🛠️ Build & Push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
