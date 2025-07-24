@@ -88,7 +88,7 @@ jobs:
       - name: 🔎 Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: yourdockerhubusername/yourimage:latest
+          image-ref: Hemanth0725/yourimage:latest
           format: table
           exit-code: 1
           severity: HIGH,CRITICAL
