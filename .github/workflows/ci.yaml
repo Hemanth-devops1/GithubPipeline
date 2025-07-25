@@ -43,7 +43,7 @@ jobs:
 
   snyk-code:
     runs-on: ubuntu-latest
-    continue-on-error: true  # Prevent pipeline from failing
+    # continue-on-error: true  # Prevent pipeline from failing
     steps:
       - name: 🔁 Checkout code
         uses: actions/checkout@v3
