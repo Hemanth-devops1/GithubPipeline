@@ -77,13 +77,13 @@ jobs:
           push: true
           tags: hemanth0725/yourimage:latest
 
-      # - name: 🔐 Snyk Container Scan
-      #   uses: snyk/actions/docker@master
-      #   env:
-      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      #   with:
-      #     image: hemanth0725/yourimage:latest
-      #     args: --severity-threshold=high
+      - name: 🔐 Snyk Container Scan
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: hemanth0725/yourimage:latest
+          args: --severity-threshold=high
 
       # - name: 🔎 Trivy Scan
       #   uses: aquasecurity/trivy-action@master
