@@ -1,0 +1,24 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - dev  # or whichever branch triggers deployments
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Configure kubeconfig
+      run: |
+        echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
+
+    - name: Apply Kubernetes Manifests
+      run: |
+        kubectl apply -f k8s/dev/deployment.yaml
+        kubectl apply -f k8s/dev/service.yaml
